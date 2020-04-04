@@ -9,6 +9,7 @@ const jsonDb = fs.readFileSync("./db/db.json");
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+
 // Route to serve notes.html
 app.get("/notes", function(req, res) {
   res.sendFile(path.join(__dirname, "public/notes.html"));
@@ -19,53 +20,39 @@ app.get("*", function(req, res) {
   res.sendFile(path.join(__dirname, "public/index.html"));
 });
 
-// const jsonDb = fs.readFileSync("./db/db.json");
-// const jsonData = JSON.parse(jsonDb);
-// console.log(jsonData);
-
-
-// app.get("/api/jokes", function(req, res) {
-//   fs.readFile("jokes.json", function(err, data) {
-//     if (err) {
-//       res.status(500);
-//       return res.send("An error occurred retrieving jokes.");
-//     }
-//     const retrievedJokesArray = JSON.parse(data);
-//     res.json(retrievedJokesArray);
-//   });
-// });
-
 // read the `db.json` file and return all saved notes as JSON
 app.get("/api/notes", function(req, res) {
   fs.readFile("./db/db.json", function(err, data) {
         if (err) {
           res.status(500);
-          return res.send("An error occurred retrieving jokes.");
+          return res.send("An error occurred retrieving notes.");
         }
-        const jsonArray = JSON.parse(data);
+        const notesArray = JSON.parse(data);
         res.json(jsonArray);
       });
 });
 
-app.get("/api/notes", function(req, res) {
-  // res.json(tables);
+app.get("/api/notes/:id", function(req, res) {
+  const noteid = req.params.id;
+
+   fs.readFile("./db/db.json", function(err, data) {
+    if (err) {
+        console.log(err);
+      res.status(500);
+      return res.send("That is not a working title.");
+    }
+    const notesArray = JSON.parse(data);
+
+    for (var i = 0; i < notesArray.length; i++) {
+      if (noteId === notesArray[i].title) {
+        return res.json(notesArray[i]);
+      } else {
+        res.status(404);
+        return res.send("Can't find that note. Please try again.");
+    }
+  }
 });
-
-app.get("/api/characters/:id", function(req, res) {
-  // var chosen = req.params.id;
-
-  // console.log(chosen);
-
-  // for (var i = 0; i < characters.length; i++) {
-  //   if (chosen === characters[i].routeName) {
-  //     return res.json(characters[i]);
-  //   }
-  // }
-
-  // return res.json(false);
 });
-
-
 
 app.listen(PORT, function() {
   console.log("App listening on http://localhost:" + PORT);
