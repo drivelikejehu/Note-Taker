@@ -4,6 +4,8 @@ const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 8080;
 
+const jsonDb = fs.readFileSync("./db/db.json");
+
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -22,8 +24,27 @@ app.get("*", function(req, res) {
 // console.log(jsonData);
 
 
+// app.get("/api/jokes", function(req, res) {
+//   fs.readFile("jokes.json", function(err, data) {
+//     if (err) {
+//       res.status(500);
+//       return res.send("An error occurred retrieving jokes.");
+//     }
+//     const retrievedJokesArray = JSON.parse(data);
+//     res.json(retrievedJokesArray);
+//   });
+// });
+
+// read the `db.json` file and return all saved notes as JSON
 app.get("/api/notes", function(req, res) {
-  res.json();
+  fs.readFile("./db/db.json", function(err, data) {
+        if (err) {
+          res.status(500);
+          return res.send("An error occurred retrieving jokes.");
+        }
+        const jsonArray = JSON.parse(data);
+        res.json(jsonArray);
+      });
 });
 
 app.get("/api/notes", function(req, res) {
