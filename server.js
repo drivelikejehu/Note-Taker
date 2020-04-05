@@ -28,11 +28,11 @@ app.post("/api/notes", function(req, res) {
 
     //receives new note to save and sets to const
     const body = req.body;
-    //adds an id based on counter
+    //adds an id based on amount of objects
     Object.assign(body, {id: idNum});
     //adds to db
     db.push(body);
-    //stringify db for writefile
+    //stringify db to write the file
     dbString = JSON.stringify(db);
     
     fs.writeFile("db/db.json", dbString, "utf8", function(err) {
@@ -50,50 +50,33 @@ app.post("/api/notes", function(req, res) {
   
 });
 
-app.delete("/api/notes:id", function(req, res) {
+app.delete("/api/notes/:id", function(req, res) {
+  try {
+    const id = req.params.id;
+    //  reads the json file
+    var notes = fs.readFileSync("./db/db.json", "utf8");
+    // parse the data to get an array of the objects
+    notes = JSON.parse(notes);
+    // delete the old note from the array on note objects
+    notes = notes.filter(function(note) {
+      return note.id != id;
+    });
+    //stringify db to write the file
+    const notesString = JSON.stringify(notes);
+    // write the new notes to the file
+    fs.writeFile("./db/db.json", notesString, "utf8", function(err) {
+      // error handling
+      if (err) throw err;
+    });
 
-  const id = req.params.id;
-  // const body = req.body;
+      res.json(notes);
 
-  for (i = 0; i < db.length; i++) {
-    if (id === db[i].id) {
-
-      const indexOfObject = db.map(function(item) { return item.id; }).indexOf(i);
-      const removed = db.splice(indexOfObject, 1);
-      // tableData.push(req.body);
-      console.log(indexOfObject);
-      console.log(removed);
-      res.send(`Note ${id} has been removed.`)
-    }
-    else {
-      res.status(404).send('Note not found')
-    }
-}
-
+    // error handling
+  } catch (err) {
+    throw err;
+    console.log(err);
+  }
 });
-
-
-// app.get("/api/notes/:id", function(req, res) {
-//   const noteid = req.params.id;
-
-//    fs.readFile("./db/db.json", function(err, data) {
-//     if (err) {
-//         console.log(err);
-//       res.status(500);
-//       return res.send("That is not a working title.");
-//     }
-//     const notesArray = JSON.parse(data);
-
-//     for (var i = 0; i < notesArray.length; i++) {
-//       if (noteId === notesArray[i].title) {
-//         return res.json(notesArray[i]);
-//       } else {
-//         res.status(404);
-//         return res.send("Can't find that note. Please try again.");
-//     }
-//   }
-// });
-// });
 
 // Route to serve index.html
 app.get("*", function(req, res) {
