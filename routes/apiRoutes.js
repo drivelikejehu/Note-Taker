@@ -1,32 +1,31 @@
-const tableData = require("../db/db");
+const db = require("../db/db");
 
 module.exports = function(app) {
 
-  app.get("/api/tables", function(req, res) {
-    res.json(tableData);
+  app.get("/api/notes", function(req, res) {
+    res.json(db);
   });
 
-  app.get("/api/waitlist", function(req, res) {
-    res.json(waitListData);
-  });
-  
-  app.post("/api/tables", function(req, res) {
-    if (tableData.length < 5) {
-      tableData.push(req.body);
+  app.post("/api/notes", function(req, res) {
+
+    if (data) {
+      db.push(req.body);
       res.json(true);
     }
     else {
-      waitListData.push(req.body);
       res.json(false);
     }
   });
   
-  app.post("/api/clear", function(req, res) {
-    // Empty out the arrays of data
-    tableData.length = 0;
-    waitListData.length = 0;
-
-    res.json({ ok: true });
-  });
-
+  // app.post("/api/notes:id", function(req, res) {
+  //   if (tableData.length < 5) {
+  //     tableData.push(req.body);
+  //     res.json(true);
+  //   }
+  //   else {
+  //     waitListData.push(req.body);
+  //     res.json(false);
+  //   }
+  // });
+  
 };
