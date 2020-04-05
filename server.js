@@ -50,9 +50,10 @@ app.post("/api/notes", function(req, res) {
 
 app.delete("/api/notes/:id", function(req, res) {
   try {
+    const notes = [];
     const id = req.params.id;
     //  reads the json file
-    var notes = fs.readFileSync("./db/db.json", "utf8");
+    notes = fs.readFileSync("./db/db.json", "utf8");
     // parse the data to get an array of the objects
     notes = JSON.parse(notes);
     // filter the object out and reassign notes
