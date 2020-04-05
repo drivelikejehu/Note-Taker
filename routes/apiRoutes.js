@@ -7,7 +7,6 @@ module.exports = function(app) {
   });
 
   app.post("/api/notes", function(req, res) {
-
     if (data) {
       db.push(req.body);
       res.json(true);
@@ -17,15 +16,21 @@ module.exports = function(app) {
     }
   });
   
-  // app.post("/api/notes:id", function(req, res) {
-  //   if (tableData.length < 5) {
-  //     tableData.push(req.body);
-  //     res.json(true);
-  //   }
-  //   else {
-  //     waitListData.push(req.body);
-  //     res.json(false);
-  //   }
-  // });
+  app.delete("/api/notes:id", function(req, res) {
+
+    const title = req.params.id;
+  
+    for (i = 0; i < db.length; i++) {
+      if (title === db([i].title)) {
+        tableData.push(req.body);
+        
+        res.json({ ok: true });
+      }
+      else {
+        res.status(404).send('Note not found')
+      }
+  }
+  
+  });
   
 };
