@@ -1,27 +1,52 @@
-const express = require("express");
-const app = express();
 const fs = require("fs");
 
 module.exports = function(app) {
 
   //counter for id
   let i = 1;
+  let db = [];
+
 
   //reads the database and returns all saved notes as json
   app.get("/api/notes", function(req, res) {
-    notesData = fs.readFileSync("db.json", "utf8");
+
+    try {
+      db = fs.readFileSync("db/db.json", "utf8");
+      console.log(db);
+      // parse it so database is an array of objects
+      db = JSON.parse(db);
+      console.log(db);
+  
+      // error handling
+    } catch (err) {
+      console.log("You have an error");
+      console.log(err);
+    }
+    //   send objects to the browser
     res.json(db);
   });
+
   //receives new note to save, adds an id, 
   //adds to db, and returns the note
   //increment counter for next note
   app.post("/api/notes", function(req, res) {
+
+    try {
+      db = fs.readFileSync("db/db.json", "utf8");
+      db = JSON.parse(db);
+      const body = req.body;
+      Object.assign(body, {id: i});
+      db.push(body);
+      
+      res.send(db);
+      i++;
+  
+      // error handling
+    } catch (err) {
+      console.log("You have an error");
+      console.log(err);
+    }
     
-    const body = req.body;
-    Object.assign(body, {id: i});
-    db.push(body);
-    res.send(body);
-    i++;
   });
   
   app.delete("/api/notes:id", function(req, res) {
@@ -37,7 +62,7 @@ module.exports = function(app) {
         // tableData.push(req.body);
         console.log(indexOfObject);
         console.log(removed);
-        res.send(`Note ${id} has been removed.`);
+        res.send(`Note ${id} has been removed.`)
       }
       else {
         res.status(404).send('Note not found')
