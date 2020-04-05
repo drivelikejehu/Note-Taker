@@ -1,4 +1,6 @@
-const db = require("../db/db");
+const express = require("express");
+const app = express();
+const fs = require("fs");
 
 module.exports = function(app) {
 
@@ -7,6 +9,7 @@ module.exports = function(app) {
 
   //reads the database and returns all saved notes as json
   app.get("/api/notes", function(req, res) {
+    notesData = fs.readFileSync("db.json", "utf8");
     res.json(db);
   });
   //receives new note to save, adds an id, 
@@ -24,13 +27,17 @@ module.exports = function(app) {
   app.delete("/api/notes:id", function(req, res) {
 
     const id = req.params.id;
-    const body = req.body;
+    // const body = req.body;
   
     for (i = 0; i < db.length; i++) {
       if (id === db[i].id) {
-        tableData.push(req.body);
 
-        res.json({ ok: true });
+        const indexOfObject = db.map(function(item) { return item.id; }).indexOf(i);
+        const removed = db.splice(indexOfObject, 1);
+        // tableData.push(req.body);
+        console.log(indexOfObject);
+        console.log(removed);
+        res.send(`Note ${id} has been removed.`);
       }
       else {
         res.status(404).send('Note not found')
